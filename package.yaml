@@ -1,10 +1,10 @@
-name:                http-lesson
+name:                haskell-rest
 version:             0.1.0.0
-github:              "githubuser/http-lesson"
+github:              "fleurnoir/haskell-rest"
 license:             BSD3
-author:              "Author name here"
-maintainer:          "example@example.com"
-copyright:           "2022 Author name here"
+author:              "Andrei Miasnikov"
+maintainer:          "myasnikov.nd@gmail.com"
+copyright:           "2022 Andrei Miasnikov"
 
 extra-source-files:
 - README.md
@@ -17,7 +17,7 @@ extra-source-files:
 # To avoid duplicated efforts in documentation and dealing with the
 # complications of embedding Haddock markup inside cabal files, it is
 # common to point users to the README.md file.
-description:         Please see the README on GitHub at <https://github.com/githubuser/http-lesson#readme>
+description:         Please see the README on GitHub at <https://github.com/fleurnoir/haskell-rest#readme>
 
 dependencies:
 - base >= 4.7 && < 5
@@ -25,7 +25,9 @@ dependencies:
 - http-conduit
 - aeson
 - text
-- Spock
+#- Spock
+- resource-pool
+- happstack-server
 - monad-logger
 - persistent
 - persistent-sqlite
@@ -35,7 +37,7 @@ library:
   source-dirs: src
 
 executables:
-  http-lesson-exe:
+  haskell-rest-exe:
     main:                Main.hs
     source-dirs:         app
     ghc-options:
@@ -43,11 +45,11 @@ executables:
     - -rtsopts
     - -with-rtsopts=-N
     dependencies:
-    - http-lesson
+    - haskell-rest
     
 
 tests:
-  http-lesson-test:
+  haskell-rest-test:
     main:                Spec.hs
     source-dirs:         test
     ghc-options:
@@ -55,7 +57,7 @@ tests:
     - -rtsopts
     - -with-rtsopts=-N
     dependencies:
-    - http-lesson
+    - haskell-rest
 
 default-extensions:
   - OverloadedStrings

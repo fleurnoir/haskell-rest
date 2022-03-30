@@ -1,72 +1,55 @@
-{-# LANGUAGE GADTs                      #-}
-{-# LANGUAGE TypeFamilies               #-}
+{-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE UndecidableInstances #-}
 
 module Main where
-import Data.Text as T
-import Web.Spock
-import Web.Spock.Config
-import Control.Monad.IO.Class
+
 import BookStore.Models
-import qualified Database.Persist as P
-import Database.Persist.Sqlite hiding (get)
-import Control.Monad.Logger (LoggingT, runStdoutLoggingT)
-import Data.Aeson hiding (json)
-import Data.Aeson.Types
-import Network.HTTP.Simple (getRequestHeader)
+import Database.Persist.Sql
+import Control.Monad.Logger
+import Database.Persist.Sqlite
+import Happstack.Server
+import Control.Monad
+import Data.Pool
+import BookStore.Utils (jsonResponse, jsonMaybeResponse, getRequestBody)
+import Control.Monad.IO.Class
+import Data.Aeson
+import BookStore.Repository
+import Data.Int
+import Happstack.Server.Internal.Monads (ServerPartT(ServerPartT))
+import qualified Data.Text as T
 
-runSQL :: (HasSpock m, SpockConn m ~ SqlBackend) => SqlPersistT (LoggingT IO) a -> m a
-runSQL action = runQuery $ \conn -> runStdoutLoggingT $ runSqlConn action conn
-
-errorJson :: Int -> Text -> ApiAction ()
-errorJson code message =
-  json $
-    object [ 
-        "result" .= String "failure", 
-        "error" .= object [
-            "code" .= code, 
-            "message" .= message
-        ]
-    ]
-
-main :: IO ()
 main = do
     pool <- runStdoutLoggingT $ createSqlitePool "api.db" 5
-    spockCfg <- defaultSpockCfg () (PCPool pool) ()
-    runStdoutLoggingT $ runSqlPool (do runMigration migrateAll) pool
-    runSpock 8080 (spock spockCfg app)
+    runSqlPool (runMigration migrateAll) pool
+    simpleHTTP nullConf $ server pool
 
-type Api = SpockM SqlBackend () () ()
+runSQL :: ToJSON a 
+    => SqlPersistT (LoggingT IO) a 
+    -> (a -> ServerPartT IO Response) 
+    -> Pool SqlBackend 
+    -> ServerPartT IO Response
+runSQL action buildResponse pool = do
+    result <- liftIO $ runStdoutLoggingT $ runSqlPool action pool
+    buildResponse result
 
-type ApiAction a = SpockAction SqlBackend () () a
+server :: Pool SqlBackend -> ServerPartT IO Response
+server pool = msum [
+        dir "book" $ path $ \id -> do
+            method GET
+            runSQL (getBook id) jsonMaybeResponse pool,
+        dir "book" $ do
+            method GET
+            runSQL getBooks jsonResponse pool,
+        dir "book" $ do
+            method POST
+            body <- getRequestBody :: ServerPartT IO (Maybe Book)
+            case body of
+                Nothing -> badRequest $ toResponse ("Invalid body" :: T.Text)
+                Just book -> runSQL (insertBook book) jsonResponse pool
+    ]
 
-app :: Api
-app = do 
-    get "book" $ do
-        sess <- getState  
-        allBooks <- runSQL $ selectList [] [Asc BookId]
-        json allBooks
-    
-    get ("book" <//> var) $ \bookId -> do
-        maybeBook <- runSQL $ P.get bookId :: ApiAction (Maybe Book)
-        case maybeBook of
-            Nothing -> errorJson 2 "Could not find a book with matching id"
-            Just theBook -> json theBook
+instance (ToBackendKey SqlBackend a) => FromReqURI (Key a) where
+    fromReqURI input = do
+        id <- fromReqURI input :: Maybe Int64
+        return $ toSqlKey id
 
-    post "book" $ do
-        maybeBook <- jsonBody' :: ApiAction (Maybe Book)
-        case maybeBook of
-            Nothing -> errorJson 1 "Failed to parse request body as Book"
-            Just theBook -> do
-                newId <- runSQL $ insert theBook
-                json $ object ["result" .= String "success", "id" .= newId]
-
-    put ("book" <//> var) $ \bookId -> do 
-        maybeBook <- jsonBody' :: ApiAction (Maybe Book)
-        case maybeBook of
-            Nothing -> errorJson 1 "Failed to parse request body as Book"
-            Just theBook -> do
-                runSQL $ update (bookId :: Key Book) [
-                    BookAuthor =. bookAuthor theBook, 
-                    BookTitle =. bookTitle theBook,
-                    BookYear =. bookYear theBook]
-                json $ object ["result" .= String "success", "id" .= bookId]

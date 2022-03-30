@@ -4,14 +4,14 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 
-name:           http-lesson
+name:           haskell-rest
 version:        0.1.0.0
-description:    Please see the README on GitHub at <https://github.com/githubuser/http-lesson#readme>
-homepage:       https://github.com/githubuser/http-lesson#readme
-bug-reports:    https://github.com/githubuser/http-lesson/issues
-author:         Author name here
-maintainer:     example@example.com
-copyright:      2022 Author name here
+description:    Please see the README on GitHub at <https://github.com/fleurnoir/haskell-rest#readme>
+homepage:       https://github.com/fleurnoir/haskell-rest#readme
+bug-reports:    https://github.com/fleurnoir/haskell-rest/issues
+author:         Andrei Miasnikov
+maintainer:     myasnikov.nd@gmail.com
+copyright:      2022 Andrei Miasnikov
 license:        BSD3
 license-file:   LICENSE
 build-type:     Simple
@@ -21,36 +21,38 @@ extra-source-files:
 
 source-repository head
   type: git
-  location: https://github.com/githubuser/http-lesson
+  location: https://github.com/fleurnoir/haskell-rest
 
 library
   exposed-modules:
       BookStore.Models
       BookStore.Repository
+      BookStore.Utils
   other-modules:
-      Paths_http_lesson
+      Paths_haskell_rest
   hs-source-dirs:
       src
   default-extensions:
       OverloadedStrings
       DeriveGeneric
   build-depends:
-      Spock
-    , aeson
+      aeson
     , base >=4.7 && <5
     , bytestring
+    , happstack-server
     , http-conduit
     , monad-logger
     , persistent
     , persistent-sqlite
     , persistent-template
+    , resource-pool
     , text
   default-language: Haskell2010
 
-executable http-lesson-exe
+executable haskell-rest-exe
   main-is: Main.hs
   other-modules:
-      Paths_http_lesson
+      Paths_haskell_rest
   hs-source-dirs:
       app
   default-extensions:
@@ -58,24 +60,25 @@ executable http-lesson-exe
       DeriveGeneric
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      Spock
-    , aeson
+      aeson
     , base >=4.7 && <5
     , bytestring
+    , happstack-server
+    , haskell-rest
     , http-conduit
-    , http-lesson
     , monad-logger
     , persistent
     , persistent-sqlite
     , persistent-template
+    , resource-pool
     , text
   default-language: Haskell2010
 
-test-suite http-lesson-test
+test-suite haskell-rest-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
-      Paths_http_lesson
+      Paths_haskell_rest
   hs-source-dirs:
       test
   default-extensions:
@@ -83,15 +86,16 @@ test-suite http-lesson-test
       DeriveGeneric
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      Spock
-    , aeson
+      aeson
     , base >=4.7 && <5
     , bytestring
+    , happstack-server
+    , haskell-rest
     , http-conduit
-    , http-lesson
     , monad-logger
     , persistent
     , persistent-sqlite
     , persistent-template
+    , resource-pool
     , text
   default-language: Haskell2010

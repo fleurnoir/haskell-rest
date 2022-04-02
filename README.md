@@ -11,8 +11,8 @@ The application is REST API representing CRUD operations of a rudimetary "Book s
 ```
 
 ## Used stack: 
-- Web framework: happstack-server
-- SQL storage: persistent
+- Web framework: [happstack-server](https://hackage.haskell.org/package/happstack-server)
+- SQL storage: [persistent](https://hackage.haskell.org/package/persistent)
 
 ## Endpoints
 - `GET /book` (roles: "User") - returns a list of all books in the store.

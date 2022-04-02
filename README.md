@@ -1,4 +1,4 @@
-# Demo REST API in Haaskell
+# Demo REST API in Haskell
 
 The application is REST API representing CRUD operations of a rudimetary "Book store". The Book object has the following format:
 ```JSON

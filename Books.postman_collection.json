@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "f0116ff5-f047-44df-a248-d7ad94563f58",
+		"_postman_id": "dc5506da-6664-4288-9a34-295b57c2df36",
 		"name": "Books",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -71,13 +71,13 @@
 					"type": "basic",
 					"basic": [
 						{
-							"key": "username",
-							"value": "user",
+							"key": "password",
+							"value": "{{userPassword}}",
 							"type": "string"
 						},
 						{
-							"key": "password",
-							"value": "12345",
+							"key": "username",
+							"value": "{{userUser}}",
 							"type": "string"
 						}
 					]
@@ -132,13 +132,13 @@
 					"type": "basic",
 					"basic": [
 						{
-							"key": "username",
-							"value": "admin",
+							"key": "password",
+							"value": "{{adminPassword}}",
 							"type": "string"
 						},
 						{
-							"key": "password",
-							"value": "12345",
+							"key": "username",
+							"value": "{{adminUser}}",
 							"type": "string"
 						}
 					]
@@ -201,12 +201,12 @@
 					"basic": [
 						{
 							"key": "password",
-							"value": "12345",
+							"value": "{{userPassword}}",
 							"type": "string"
 						},
 						{
 							"key": "username",
-							"value": "user",
+							"value": "{{userUser}}",
 							"type": "string"
 						}
 					]
@@ -270,12 +270,12 @@
 					"basic": [
 						{
 							"key": "password",
-							"value": "12345",
+							"value": "{{userPassword}}",
 							"type": "string"
 						},
 						{
 							"key": "username",
-							"value": "user",
+							"value": "{{userUser}}",
 							"type": "string"
 						}
 					]
@@ -318,13 +318,13 @@
 					"type": "basic",
 					"basic": [
 						{
-							"key": "username",
-							"value": "admin",
+							"key": "password",
+							"value": "{{adminPassword}}",
 							"type": "string"
 						},
 						{
-							"key": "password",
-							"value": "12345",
+							"key": "username",
+							"value": "{{adminUser}}",
 							"type": "string"
 						}
 					]
@@ -397,12 +397,12 @@
 					"basic": [
 						{
 							"key": "password",
-							"value": "12345",
+							"value": "{{userPassword}}",
 							"type": "string"
 						},
 						{
 							"key": "username",
-							"value": "user",
+							"value": "{{userUser}}",
 							"type": "string"
 						}
 					]
@@ -445,13 +445,13 @@
 					"type": "basic",
 					"basic": [
 						{
-							"key": "username",
-							"value": "admin",
+							"key": "password",
+							"value": "{{adminPassword}}",
 							"type": "string"
 						},
 						{
-							"key": "password",
-							"value": "12345",
+							"key": "username",
+							"value": "{{adminUser}}",
 							"type": "string"
 						}
 					]
@@ -495,12 +495,12 @@
 					"basic": [
 						{
 							"key": "password",
-							"value": "12345",
+							"value": "{{userPassword}}",
 							"type": "string"
 						},
 						{
 							"key": "username",
-							"value": "user",
+							"value": "{{userUser}}",
 							"type": "string"
 						}
 					]
@@ -545,6 +545,26 @@
 		{
 			"key": "host",
 			"value": "http://localhost:8000",
+			"type": "string"
+		},
+		{
+			"key": "adminUser",
+			"value": "admin",
+			"type": "string"
+		},
+		{
+			"key": "adminPassword",
+			"value": "12345",
+			"type": "string"
+		},
+		{
+			"key": "userUser",
+			"value": "user",
+			"type": "string"
+		},
+		{
+			"key": "userPassword",
+			"value": "12345",
 			"type": "string"
 		}
 	]

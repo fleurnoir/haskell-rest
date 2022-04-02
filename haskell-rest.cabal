@@ -25,8 +25,12 @@ source-repository head
 
 library
   exposed-modules:
+      BookStore.BasicAuthorization
+      BookStore.EitherTransform
       BookStore.Models
-      BookStore.Repository
+      BookStore.Repository.Book
+      BookStore.Repository.User
+      BookStore.ServerAction
       BookStore.Utils
   other-modules:
       Paths_haskell_rest
@@ -38,10 +42,13 @@ library
   build-depends:
       aeson
     , base >=4.7 && <5
+    , base64-bytestring
     , bytestring
+    , either
     , happstack-server
     , http-conduit
     , monad-logger
+    , mtl
     , persistent
     , persistent-sqlite
     , persistent-template
@@ -62,11 +69,14 @@ executable haskell-rest-exe
   build-depends:
       aeson
     , base >=4.7 && <5
+    , base64-bytestring
     , bytestring
+    , either
     , happstack-server
     , haskell-rest
     , http-conduit
     , monad-logger
+    , mtl
     , persistent
     , persistent-sqlite
     , persistent-template
@@ -88,11 +98,14 @@ test-suite haskell-rest-test
   build-depends:
       aeson
     , base >=4.7 && <5
+    , base64-bytestring
     , bytestring
+    , either
     , happstack-server
     , haskell-rest
     , http-conduit
     , monad-logger
+    , mtl
     , persistent
     , persistent-sqlite
     , persistent-template

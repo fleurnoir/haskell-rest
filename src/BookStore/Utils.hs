@@ -4,28 +4,68 @@ import Data.Aeson
 import Happstack.Server
 import qualified Data.Text as T
 import Data.Text.Lazy.Encoding
-import Control.Applicative (Alternative(empty))
 import Control.Monad.IO.Class
+import BookStore.EitherTransform
+import qualified Data.Text.Encoding as T
+import BookStore.ServerAction
+import Database.Persist.Sql
+import Data.Pool
+import Control.Monad.Logger
+import Control.Monad
+import BookStore.Models
+import Data.List
+import qualified Data.ByteString.Base64 as B64
+import qualified GHC.TypeLits as T
 
-jsonResponse :: ToJSON a => a -> ServerPartT IO Response
+jsonResponse :: ToJSON a => a -> ServerAction Response
 jsonResponse object = do
-    response <- ok $ toResponse $ decodeUtf8 $ encode object
+    response <- lift $ ok $ toResponse $ decodeUtf8 $ encode object
     return $ setHeader "Content-Type" "application/json" response
 
-jsonMaybeResponse :: ToJSON a => Maybe a -> ServerPartT IO Response
-jsonMaybeResponse (Just object) = jsonResponse object
-jsonMaybeResponse Nothing = notFoundResponse
+jsonMaybeNotFoundResponse :: ToJSON a => Maybe a -> ServerAction Response
+jsonMaybeNotFoundResponse (Just object) = jsonResponse object
+jsonMaybeNotFoundResponse Nothing = notFoundResponse "Not found"
 
-notFoundResponse :: ServerPartT IO Response
-notFoundResponse = notFound $ toResponse ("Nothing was Found" :: T.Text)
+notFoundResponse :: T.Text -> ServerAction Response
+notFoundResponse = lift . notFound . toResponse
 
-badRequestResponse :: ServerPartT IO Response
-badRequestResponse = notFound $ toResponse ("Nothing was Found" :: T.Text)
+badRequestResponse :: T.Text -> ServerAction Response
+badRequestResponse = lift . badRequest . toResponse
 
-getRequestBody :: FromJSON a => ServerPartT IO (Maybe a)
+unauthorizedResponse :: ServerAction Response
+unauthorizedResponse = statusResponse 401 "Unauthorized"
+
+forbiddenResponse :: ServerAction Response
+forbiddenResponse = statusResponse 403 "Forbidden"
+
+statusResponse :: Int -> T.Text -> ServerAction Response
+statusResponse code = lift . resp code . toResponse
+
+noContentResponse :: ServerAction Response
+noContentResponse = lift $ noContent $ toResponse ("" :: T.Text)
+
+getRequestBody :: FromJSON a => ServerAction a
 getRequestBody = do
-    request <- askRq
-    maybeBody <- liftIO $ takeRequestBody request
-    return $ do 
-        body <- maybeBody
-        decode $ unBody body
+    request <- lift askRq
+    maybeBody <- lift $ takeRequestBody request
+    case maybeBody of
+        Nothing -> throw $ badRequestResponse "Request body required"
+        Just body -> case decode $ unBody body of
+            Nothing -> throw $ badRequestResponse "Couldn't deserialize response body"
+            Just result -> return result
+
+getRequest :: ServerAction Request
+getRequest = lift askRq
+
+getRequestHeader :: ServerAction Response -> T.Text -> ServerAction T.Text
+getRequestHeader errorResponse key = do
+    maybeHeader <- getHeader (T.unpack key) <$> getRequest
+    case maybeHeader of
+        Nothing -> throw errorResponse
+        Just header -> return $ T.decodeUtf8 header
+
+getAuthHeader :: ServerAction T.Text
+getAuthHeader = getRequestHeader unauthorizedResponse "Authorization"
+
+runSQL :: Pool SqlBackend -> SqlPersistT (LoggingT IO) a -> IO a
+runSQL pool action = runStdoutLoggingT $ runSqlPool action pool

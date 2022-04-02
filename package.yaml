@@ -25,6 +25,8 @@ dependencies:
 - http-conduit
 - aeson
 - text
+- mtl
+- either
 #- Spock
 - resource-pool
 - happstack-server
@@ -32,6 +34,7 @@ dependencies:
 - persistent
 - persistent-sqlite
 - persistent-template
+- base64-bytestring
 
 library:
   source-dirs: src

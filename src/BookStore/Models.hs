@@ -26,4 +26,10 @@ Book json
   title T.Text
   year Int
   deriving Show
+
+User json
+  name T.Text
+  password T.Text
+  roles T.Text
+  deriving Show
 |]

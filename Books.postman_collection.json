@@ -1,0 +1,551 @@
+{
+	"info": {
+		"_postman_id": "f0116ff5-f047-44df-a248-d7ad94563f58",
+		"name": "Books",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Unauthenticated request",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Unauthenticated request - Check status code is 401\", function () {\r",
+							"    console.log(\"url : \" + request.url);\r",
+							"    // assert that the status code is 401\r",
+							"    pm.response.to.have.status(401);\r",
+							"});\r"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"year\":2021,\r\n  \"title\":\"Dandelion Wine\",\r\n  \"author\":\"Ray Bradbury\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/book",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"book"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Unauthorized request",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Unauthenticated request - Check status code is 403\", function () {\r",
+							"    console.log(\"url : \" + request.url);\r",
+							"    // assert that the status code is 403\r",
+							"    pm.response.to.have.status(403);\r",
+							"});\r"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "user",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "12345",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"year\":2021,\r\n  \"title\":\"Dandelion Wine\",\r\n  \"author\":\"Ray Bradbury\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/book",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"book"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add Book",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Create book - Check status code is 200\", function () {\r",
+							"    console.log(\"url : \" + request.url);\r",
+							"    // assert that the status code is 200\r",
+							"    pm.response.to.have.status(200);\r",
+							"    // assert that the response has a valid JSON body\r",
+							"    pm.response.to.be.withBody;\r",
+							"    // checks if a body  exists\r",
+							"    pm.response.to.be.json;\r",
+							"    pm.environment.set(\"bookId\", pm.response.json());\r",
+							"});\r"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "admin",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "12345",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"year\":2021,\r\n  \"title\":\"Dandelion Wine\",\r\n  \"author\":\"Ray Bradbury\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/book",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"book"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get books",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Get books - Check status code is 200 and has JSON body\", function () {\r",
+							"  console.log(\"url : \" + request.url);\r",
+							"  // assert that the status code is 200\r",
+							"  pm.response.to.have.status(200);\r",
+							"  // assert that the response has a valid JSON body\r",
+							"  pm.response.to.be.withBody;\r",
+							"  // checks if a body  exists\r",
+							"  pm.response.to.be.json;\r",
+							"});\r",
+							"\r",
+							"const responseArray = pm.response.json();\r",
+							"\r",
+							"pm.test(\"Get books - returned array is not empty\", function () {\r",
+							"  pm.expect(responseArray.length).is.to.above(0);   \r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "12345",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "user",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/book",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"book"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get book",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Get book - Check status code is 200 and has JSON body\", function () {\r",
+							"  console.log(\"url : \" + request.url);\r",
+							"  // assert that the status code is 200\r",
+							"  pm.response.to.have.status(200);\r",
+							"  // assert that the response has a valid JSON body\r",
+							"  pm.response.to.be.withBody;\r",
+							"  // checks if a body  exists\r",
+							"  pm.response.to.be.json;\r",
+							"});\r",
+							"\r",
+							"const responseBook = pm.response.json();\r",
+							"\r",
+							"pm.test(\"Get book - id is correct\", function () {\r",
+							"  pm.expect(responseBook.id).is.to.equal(pm.environment.get(\"bookId\"));   \r",
+							"});\r",
+							"\r",
+							"pm.test(\"Get book - Author is correct\", function () {\r",
+							"  pm.expect(responseBook.author).is.to.equal(\"Ray Bradbury\");   \r",
+							"});\r",
+							"\r",
+							"pm.test(\"Get book - Title is correct\", function () {\r",
+							"  pm.expect(responseBook.title).is.to.equal(\"Dandelion Wine\");   \r",
+							"});\r",
+							"\r",
+							"pm.test(\"Get book - Year is correct\", function () {\r",
+							"  pm.expect(responseBook.year).is.to.equal(2021);   \r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "12345",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "user",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/book/{{bookId}}",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"book",
+						"{{bookId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Book",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Update book - Check status code is 204 - no content\", function () {\r",
+							"    console.log(\"url : \" + request.url);\r",
+							"    // assert that the status code is 204\r",
+							"    pm.response.to.have.status(204);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "admin",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "12345",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"id\":{{bookId}},\r\n  \"year\":2017,\r\n  \"title\":\"Nausea\",\r\n  \"author\":\"Jean Paul Sartre\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/book",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"book"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Check Updated Book",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Get book - Check status code is 200 and has JSON body\", function () {\r",
+							"  console.log(\"url : \" + request.url);\r",
+							"  // assert that the status code is 200\r",
+							"  pm.response.to.have.status(200);\r",
+							"  // assert that the response has a valid JSON body\r",
+							"  pm.response.to.be.withBody;\r",
+							"  // checks if a body  exists\r",
+							"  pm.response.to.be.json;\r",
+							"});\r",
+							"\r",
+							"const responseBook = pm.response.json();\r",
+							"\r",
+							"pm.test(\"Get book - id is correct\", function () {\r",
+							"  pm.expect(responseBook.id).is.to.equal(pm.environment.get(\"bookId\"));   \r",
+							"});\r",
+							"\r",
+							"pm.test(\"Get book - Author is correct\", function () {\r",
+							"  pm.expect(responseBook.author).is.to.equal(\"Jean Paul Sartre\");   \r",
+							"});\r",
+							"\r",
+							"pm.test(\"Get book - Title is correct\", function () {\r",
+							"  pm.expect(responseBook.title).is.to.equal(\"Nausea\");   \r",
+							"});\r",
+							"\r",
+							"pm.test(\"Get book - Year is correct\", function () {\r",
+							"  pm.expect(responseBook.year).is.to.equal(2017);   \r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "12345",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "user",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/book/{{bookId}}",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"book",
+						"{{bookId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Book",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Delete book - Check status code is 204 - no content\", function () {\r",
+							"    console.log(\"url : \" + request.url);\r",
+							"    // assert that the status code is 204\r",
+							"    pm.response.to.have.status(204);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "admin",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "12345",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/book/{{bookId}}",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"book",
+						"{{bookId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Check Book Is Deleted",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Check book is deleted - Check status code is 404\", function () {\r",
+							"  console.log(\"url : \" + request.url);\r",
+							"  // assert that the status code is 404\r",
+							"  pm.response.to.have.status(404);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "12345",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "user",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/book/{{bookId}}",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"book",
+						"{{bookId}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "host",
+			"value": "http://localhost:8000",
+			"type": "string"
+		}
+	]
+}

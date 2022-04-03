@@ -3,7 +3,6 @@ module BookStore.Repository.Book where
 import Control.Monad.IO.Class
 import Database.Persist.Sql
 import BookStore.Models
-import qualified Data.Text as T
 
 getBooks :: MonadIO m => SqlPersistT m [Entity Book]
 getBooks = selectList [] [Asc BookId]

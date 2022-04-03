@@ -25,12 +25,12 @@ source-repository head
 
 library
   exposed-modules:
+      BookStore.Actions
       BookStore.BasicAuthorization
       BookStore.EitherTransform
       BookStore.Models
       BookStore.Repository.Book
       BookStore.Repository.User
-      BookStore.ServerAction
       BookStore.Utils
   other-modules:
       Paths_haskell_rest

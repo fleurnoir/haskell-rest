@@ -5,6 +5,7 @@ import Happstack.Server
 import qualified Data.Text as T
 import Data.Text.Lazy.Encoding
 import Control.Monad.IO.Class
+import Control.Monad.Trans.Class
 import BookStore.EitherTransform
 import qualified Data.Text.Encoding as T
 import BookStore.ServerAction

@@ -8,6 +8,7 @@ import Control.Monad.Logger
 import Database.Persist.Sqlite
 import Happstack.Server
 import Control.Monad
+import Control.Monad.Trans.Class
 import Data.Pool
 import BookStore.Repository.Book
 import BookStore.Repository.User

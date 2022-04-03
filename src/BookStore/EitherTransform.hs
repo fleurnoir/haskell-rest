@@ -2,11 +2,12 @@ module BookStore.EitherTransform where
 
 import Control.Applicative
 import Control.Monad.IO.Class
+import Control.Monad.Trans.Class
 
 newtype EitherT l m r = EitherT { runEitherT :: m (Either l r) }
 
-lift :: (Monad m) => m a -> EitherT l m a
-lift value = EitherT (Right <$> value)
+instance MonadTrans (EitherT l) where
+    lift value = EitherT (Right <$> value)
 
 instance (Functor m) => Functor (EitherT l m) where
     fmap f x =

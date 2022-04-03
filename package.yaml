@@ -35,6 +35,7 @@ dependencies:
 - persistent-sqlite
 - persistent-template
 - base64-bytestring
+- transformers
 
 library:
   source-dirs: src

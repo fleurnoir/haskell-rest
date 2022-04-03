@@ -28,6 +28,7 @@ server = msum [
 
 unpackSQLPart :: Pool SqlBackend -> UnWebT (SqlPersistT (LoggingT IO)) a -> UnWebT IO a
 unpackSQLPart pool sqlAction = runStdoutLoggingT $ runSqlPool sqlAction pool
+
 instance (ToBackendKey SqlBackend a) => FromReqURI (Key a) where
     fromReqURI input = do
         id <- fromReqURI input :: Maybe Int64

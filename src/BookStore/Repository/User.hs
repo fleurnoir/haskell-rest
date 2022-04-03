@@ -5,6 +5,6 @@ import Database.Persist.Sql
 import BookStore.Models
 
 getUser :: MonadIO m => T.Text -> SqlPersistT m (Maybe User)
-getUser "admin" = return $ Just (User "admin" "12345" "Admin,User")
-getUser "user" = return $ Just (User "user" "12345" "User")
+getUser "John" = return $ Just (User "John" "12345" "Admin,User")
+getUser "Bob" = return $ Just (User "Bob" "12345" "User")
 getUser _ = return Nothing

@@ -549,7 +549,7 @@
 		},
 		{
 			"key": "adminUser",
-			"value": "admin",
+			"value": "John",
 			"type": "string"
 		},
 		{
@@ -559,7 +559,7 @@
 		},
 		{
 			"key": "userUser",
-			"value": "user",
+			"value": "Bob",
 			"type": "string"
 		},
 		{

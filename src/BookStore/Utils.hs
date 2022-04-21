@@ -1,3 +1,4 @@
+{-# LANGUAGE FlexibleContexts #-}
 module BookStore.Utils where
 
 import Data.Aeson
@@ -41,12 +42,12 @@ getRequestBody = do
             Nothing -> finishWith $ badRequestResponse "Couldn't deserialize response body"
             Just result -> return result
 
-getRequestHeader :: Monad m => Response -> T.Text -> ServerPartT m T.Text
+getRequestHeader :: (WebMonad Response m, ServerMonad m) => Response -> T.Text -> m T.Text
 getRequestHeader errorResponse key = do
     maybeHeader <- getHeader (T.unpack key) <$> askRq
     case maybeHeader of
         Nothing -> finishWith errorResponse
         Just header -> return $ T.decodeUtf8 header
 
-getAuthHeader :: Monad m => ServerPartT m T.Text
+getAuthHeader :: (WebMonad Response m, ServerMonad m) => m T.Text
 getAuthHeader = getRequestHeader unauthorizedResponse "Authorization"

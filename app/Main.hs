@@ -8,14 +8,16 @@ import Control.Monad.Logger
 import Database.Persist.Sqlite
 import Happstack.Server
 import Control.Monad
+import Control.Monad.Reader
 import Data.Pool
 import Data.Int
 import BookStore.Actions
+import BookStore.ServerAction
 
 main = do
     pool <- runStdoutLoggingT $ createSqlitePool "api.db" 5
     runSqlPool (runMigration migrateAll) pool
-    simpleHTTP' (unpackSQLPart pool) nullConf server
+    simpleHTTP' (unpackEnv pool) nullConf server
 
 server :: ServerAction Response
 server = msum [
@@ -26,8 +28,8 @@ server = msum [
         dir "book" $ path deleteBookAction
     ]
 
-unpackSQLPart :: Pool SqlBackend -> UnWebT (SqlPersistT (LoggingT IO)) a -> UnWebT IO a
-unpackSQLPart pool sqlAction = runStdoutLoggingT $ runSqlPool sqlAction pool
+unpackEnv :: Pool SqlBackend -> UnWebT (ReaderT ServerEnv IO) a -> UnWebT IO a
+unpackEnv pool action = runReaderT action (ServerEnv pool)
 
 instance (ToBackendKey SqlBackend a) => FromReqURI (Key a) where
     fromReqURI input = do

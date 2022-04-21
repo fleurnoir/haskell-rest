@@ -1,3 +1,4 @@
+{-# LANGUAGE FlexibleContexts #-}
 module BookStore.BasicAuthorization(
     authorize
 ) where
@@ -11,7 +12,7 @@ import Data.List
 import Control.Monad
 import Happstack.Server
 
-authorize :: Monad m => (T.Text -> ServerPartT m (Maybe User)) -> [T.Text] -> ServerPartT m ()
+authorize :: (WebMonad Response m, ServerMonad m) => (T.Text -> m (Maybe User)) -> [T.Text] -> m ()
 authorize getUser allowedRoles = do
     (username, password) <- getCredentials
     maybeUser <- getUser username
@@ -22,7 +23,7 @@ authorize getUser allowedRoles = do
                 acceptedRoles = intersect actualRoles allowedRoles
             in when (userPassword user /= password || null acceptedRoles) $ finishWith forbiddenResponse
 
-getCredentials :: Monad m => ServerPartT m (T.Text, T.Text)
+getCredentials :: (WebMonad Response m, ServerMonad m) => m (T.Text, T.Text)
 getCredentials = do
     header <- getAuthHeader
     let authPrefix = "Basic "

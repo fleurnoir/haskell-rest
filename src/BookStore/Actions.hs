@@ -12,48 +12,48 @@ import BookStore.Utils
 import BookStore.Repository.User
 import Control.Applicative
 import Control.Monad
-
-type ServerAction a = ServerPartT (SqlPersistT (LoggingT IO)) a
+import BookStore.ServerAction
 
 getBookAction :: Key Book -> ServerAction Response
 getBookAction id = do
     method GET
     authorize ["User"]
-    lift (getBook id) >>= jsonMaybeNotFoundResponse
+    runDB (getBook id) >>= jsonMaybeNotFoundResponse
 
 getBooksAction :: ServerAction Response
 getBooksAction = do
     method GET
     authorize ["User"]
-    lift getBooks >>= jsonResponse
+    runDB getBooks >>= jsonResponse
 
 insertBookAction :: ServerAction Response
 insertBookAction = do
     method POST
     authorize ["Admin"]
     book <- getRequestBody :: ServerAction Book
-    lift (insertBook book) >>= jsonResponse
+    runDB (insertBook book) >>= jsonResponse
 
 updateBookAction :: ServerAction Response
 updateBookAction = do
     method PUT
     authorize ["Admin"]
     book <- getRequestBody :: ServerAction (Entity Book)
-    lift $ updateBook book
+    runDB $ updateBook book
     return noContentResponse
 
 deleteBookAction :: Key Book -> ServerAction Response
 deleteBookAction id = do
     method DELETE
     authorize ["Admin"]
-    lift (deleteBook id)
+    runDB (deleteBook id)
     return noContentResponse
 
 authorize :: [T.Text] -> ServerAction ()
-authorize = Basic.authorize (lift . getUser)
+authorize = Basic.authorize (runDB . getUser)
 
 instance (Monad m, Alternative m) => Alternative (LoggingT m) where
     empty = lift empty
     x <|> y = LoggingT $ \logger -> runLoggingT x logger <|> runLoggingT y logger
 
 instance (MonadPlus m) => MonadPlus (LoggingT m)
+
